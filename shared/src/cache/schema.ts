@@ -12,6 +12,8 @@ export const ArtifactMetadataSchema = z.object({
   pluginVersion: z.string(),
   schemaVersion: z.string(),
   generatedAt: z.string(),
+  /** Relative path (from projectRoot) to the emitted .ts artifact file. */
+  tsFilePath: z.string().optional(),
 });
 
 export type ArtifactMetadata = z.infer<typeof ArtifactMetadataSchema>;
@@ -23,7 +25,10 @@ export const ArtifactEntrySchema = z.object({
 
 export type ArtifactEntry = z.infer<typeof ArtifactEntrySchema>;
 
-export const ArtifactManifestSchema = z.record(z.string(), z.string().optional());
+export const ArtifactManifestSchema = z.record(
+  z.string(),
+  z.string().optional(),
+);
 
 /** cacheKey → artifact filename */
 export type ArtifactManifest = z.infer<typeof ArtifactManifestSchema>;

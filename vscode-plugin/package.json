@@ -1,7 +1,7 @@
 {
   "name": "@codespec/vscode-plugin",
   "displayName": "CodeSpec",
-  "description": "CodeSpec VS Code extension scaffold",
+  "description": "CodeSpec VS Code extension — expand, preview, and inline LLM-generated code blocks",
   "version": "0.1.0",
   "private": true,
   "publisher": "codespec",
@@ -12,20 +12,50 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:codespec.hello"
+    "onLanguage:typescript",
+    "onLanguage:javascript",
+    "onLanguage:typescriptreact",
+    "onLanguage:javascriptreact"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "codespec.hello",
-        "title": "CodeSpec: Hello"
+        "command": "codespec.expand",
+        "title": "CodeSpec: Expand block"
+      },
+      {
+        "command": "codespec.inline",
+        "title": "CodeSpec: Inline generated code"
+      },
+      {
+        "command": "codespec.copy",
+        "title": "CodeSpec: Copy generated code"
+      },
+      {
+        "command": "codespec.regenerate",
+        "title": "CodeSpec: Regenerate (rebuild)"
+      }
+    ],
+    "chatParticipants": [
+      {
+        "id": "codespec.create",
+        "name": "codespec",
+        "fullName": "CodeSpec",
+        "description": "Create and manage .codespec.md files",
+        "isSticky": false,
+        "commands": [
+          {
+            "name": "create",
+            "description": "Create a new .codespec.md file from guided inputs"
+          }
+        ]
       }
     ]
   },
   "scripts": {
-    "build": "tsc -p ./tsconfig.json",
-    "watch": "tsc -w -p ./tsconfig.json",
+    "build": "node esbuild.config.mjs && tsc -p ./tsconfig.json --noEmit",
+    "watch": "node esbuild.config.mjs --watch",
     "lint": "echo \"No lint configured yet\"",
     "test": "echo \"No tests yet\""
   },
@@ -35,6 +65,7 @@
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.9.1",
     "add": "^2.0.6",
+    "esbuild": "^0.28.0",
     "quick-lru": "^7.3.0",
     "typescript": "^5.9.2",
     "vscode-plugin": "^1.0.5"

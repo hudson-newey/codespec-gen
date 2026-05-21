@@ -155,6 +155,7 @@ export async function transformModule(
         const cached = await cacheManager.get(site.cacheKey);
         if (cached !== null) {
           generatedCode.set(site.callStart, cached);
+          cacheManager.recordLookup(filePath, site.callStart, site.type, site.cacheKey);
           return;
         }
 
@@ -200,6 +201,7 @@ export async function transformModule(
           modelId,
           generationOptions,
         });
+        cacheManager.recordLookup(filePath, site.callStart, site.type, site.cacheKey);
 
         generatedCode.set(site.callStart, generated);
       }),

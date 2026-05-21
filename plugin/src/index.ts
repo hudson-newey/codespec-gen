@@ -69,7 +69,7 @@ export function codeSpecPlugin(options: CodeSpecPluginOptions): Plugin[] {
         projectRoot,
       };
 
-      cacheManager = new CacheManager(cacheDir);
+      cacheManager = new CacheManager(cacheDir, projectRoot);
     },
   };
 
@@ -146,10 +146,12 @@ export function codeSpecPlugin(options: CodeSpecPluginOptions): Plugin[] {
         return null;
       }
     },
+
+    async closeBundle() {
+      await cacheManager.saveLookup();
+    },
   };
 
   return [configPlugin, transformPlugin];
 }
-
-export default codeSpecPlugin;
 

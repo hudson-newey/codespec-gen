@@ -19,7 +19,7 @@
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
     "cSpell.words": ["codespec"],
-    "cSpell.flagWords": ["yuo"]
+    "cSpell.flagWords": ["yuo"],
   },
   "extensions": {
     "recommendations": [
@@ -30,6 +30,7 @@
       "aaron-bond.better-comments",
       "yzhang.markdown-all-in-one",
       "davidanson.vscode-markdownlint",
+      "codespec.vscode-codespec",
     ],
-  }
+  },
 }

@@ -1,4 +1,4 @@
-# CodeSpec VS Code Extension Specification
+# CodeSpec VS Code Plugin (Extension) Specification
 
 The CodeSpec VS Code extension provides IDE workflows for previewing and inlining generated code for CodeSpec compiler functions.
 

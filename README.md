@@ -83,4 +83,4 @@ CodeSpec is designed to avoid unnecessary generation calls:
 - [CodeSpec Format Spec](./docs/codespec.spec.md)
 - [CodeSpec Standard Library Spec](./docs/stdlib.spec.md)
 - [CodeSpec Context Spec](./docs/context.spec.md)
-- [VSCode Extension Spec](./docs/vscode-extension.spec.md)
+- [VSCode Plugin Spec](./docs/vscode-plugin.spec.md)
