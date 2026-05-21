@@ -12,18 +12,19 @@ $ npm install codespec-gen
 ```ts
 // vite.config.ts
 import { defineConfig } from "vite";
+import { ollama } from "ai-sdk-ollama";
 import CodeSpec from "codespec-gen/vite";
 
 export default defineConfig({
   plugins: [
     CodeSpec({
-      provider: "openai", // "anthropic" | "openai" | "ollama"
-      model: "gpt-4o",
-      apiKey: process.env.CODESPEC_API_KEY!,
-      // Optional: override generation settings if needed.
-      // By default, CodeSpec uses the lowest provider-supported temperature
-      // for reproducible builds across environments.
-      // temperature: 0,
+      // CodeSpec uses Vercel's AI SDK to interface with any provider that
+      // implements the standard interface.
+      //
+      // See the Vercel AI SDK for available providers and documentation on how
+      // to implement your own:
+      // https://github.com/vercel/ai/
+      provider: ollama("gemma4"),
     }),
   ],
 });
