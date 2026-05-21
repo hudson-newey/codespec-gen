@@ -132,4 +132,3 @@ The extension should support documentation generation scenarios (for example thr
 - Multi-block generation for related prompt calls in the same scope.
 - Diff view between current preview and regenerated output.
 - Configurable generation model/provider settings.
-- Explicit preview of context inherited from nearby `context$` blocks.
