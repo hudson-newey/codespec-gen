@@ -41,6 +41,7 @@ Out of scope:
 
 - Prompt block call: A call expression to a supported CodeSpec function.
 - Effective context: The merged context visible at a call site (for example local `context$` calls, imported context strings, and plugin-level defaults).
+- Directory context: Context loaded from `AGENTS.md` files in the current file's parent-directory chain.
 - Generated payload: The model output returned for a prompt block call.
 - Inline rewrite: AST-backed source rewrite replacing a prompt block call with generated code.
 
@@ -90,14 +91,25 @@ For each transformed module:
 
 ## Context Resolution
 
+Detailed lexical scoping behavior for prompt context is defined in
+[CodeSpec Context Spec](./context.spec.md).
+
 Effective context must be computed in a predictable order.
 
 Recommended precedence (lowest to highest):
 
 1. Plugin/global default context.
-2. File-level context derived from statically analyzable declarations/imported strings.
-3. Lexically nearest `context$` calls in active scope.
-4. Explicit call-site arguments (if supported by the prompt block).
+2. Directory-level `AGENTS.md` context from project root to the current file's nearest parent directory.
+3. File-level context derived from statically analyzable declarations/imported strings.
+4. Lexically nearest `context$` calls in active scope.
+5. Explicit call-site arguments (if supported by the prompt block).
+
+Directory context requirements:
+
+1. If `<projectRoot>/AGENTS.md` exists, it must be included for all transformed files.
+2. Additional `AGENTS.md` files must be included only from ancestor directories of the file being transformed.
+3. `AGENTS.md` files from sibling or child directories must not be included.
+4. Directory context must be concatenated in deterministic path order from root to nearest parent.
 
 When context cannot be fully resolved statically, the plugin should either:
 
@@ -118,6 +130,7 @@ Cache key must include, at minimum:
 - normalized prompt/instruction text,
 - normalized invocation arguments,
 - resolved effective context,
+- resolved `AGENTS.md` directory context content,
 - model/provider identifier,
 - relevant generation options (temperature, max tokens, etc.),
 - plugin/compiler version (or cache schema version).
@@ -213,6 +226,8 @@ Configuration should be serializable and stable in CI environments.
 12. The plugin must produce actionable diagnostics for generation/transform failures.
 13. The plugin must reject non-TypeScript generation outputs.
 14. The plugin must use the lowest provider-supported temperature (or deterministic equivalent) for generation requests.
+15. The plugin must load and merge `AGENTS.md` files from the transformed file's parent-directory chain, including root-level `AGENTS.md` when present.
+16. The plugin must exclude `AGENTS.md` files outside that parent-directory chain.
 
 ## Non-Functional Requirements
 
@@ -236,12 +251,17 @@ Configuration should be serializable and stable in CI environments.
 9. On a second machine with the repository cloned (including `codespec_gen`), unchanged inputs reuse committed artifacts without requiring fresh generation calls.
 10. Generated artifacts and inlined payloads are TypeScript output.
 11. Generation requests use the lowest provider-supported temperature (or deterministic equivalent), and repeated builds with unchanged inputs do not drift due to sampling variance.
+12. If root-level `AGENTS.md` exists, transformed call sites include it in effective context for all files.
+13. For nested files, only `AGENTS.md` files in their ancestor path are included; sibling-directory `AGENTS.md` files are excluded.
 
 ## Relationship to Standard Library
 
 The standard library defines common prompt block functions and usage patterns.
 
 See [CodeSpec Standard Library Spec](./stdlib.spec.md).
+
+Context scoping semantics are defined in
+[CodeSpec Context Spec](./context.spec.md).
 
 Custom local CodeSpec file authoring/import patterns are defined in [CodeSpec Format Spec](./codespec.spec.md).
 
