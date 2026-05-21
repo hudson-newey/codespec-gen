@@ -1,0 +1,37 @@
+{
+  "name": "@codespec/vscode-plugin",
+  "displayName": "CodeSpec",
+  "description": "CodeSpec VS Code extension scaffold",
+  "version": "0.1.0",
+  "private": true,
+  "publisher": "codespec",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:codespec.hello"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codespec.hello",
+        "title": "CodeSpec: Hello"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json",
+    "watch": "tsc -w -p ./tsconfig.json",
+    "lint": "echo \"No lint configured yet\"",
+    "test": "echo \"No tests yet\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.17.2",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.9.2"
+  }
+}

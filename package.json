@@ -1,0 +1,21 @@
+{
+  "name": "codespec-gen",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CodeSpec monorepo workspace",
+  "scripts": {
+    "nx": "nx",
+    "build": "nx run-many -t build --all",
+    "lint": "nx run-many -t lint --all",
+    "test": "nx run-many -t test --all",
+    "dev": "nx run dev-site:dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@10.33.0",
+  "devDependencies": {
+    "nx": "22.7.2"
+  },
+  "nx": {}
+}

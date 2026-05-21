@@ -1,0 +1,40 @@
+{
+  "name": "dev-site",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "dev/src",
+  "projectType": "application",
+  "implicitDependencies": ["vite-plugin"],
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --dir dev dev"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["vite-plugin:build"],
+      "options": {
+        "command": "pnpm --dir dev build"
+      }
+    },
+    "preview": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --dir dev preview"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --dir dev lint"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --dir dev test"
+      }
+    }
+  }
+}
