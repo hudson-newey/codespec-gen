@@ -35,10 +35,11 @@
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.9.1",
     "add": "^2.0.6",
-    "p-limit": "^7.3.0",
     "quick-lru": "^7.3.0",
     "typescript": "^5.9.2",
-    "vscode-plugin": "^1.0.5",
-    "zod": "^4.4.3"
+    "vscode-plugin": "^1.0.5"
+  },
+  "dependencies": {
+    "@codespec/shared": "workspace:*"
   }
 }

@@ -1,0 +1,35 @@
+{
+  "name": "@codespec/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --outDir dist",
+    "dev": "tsup src/index.ts --format esm --dts --watch --outDir dist",
+    "lint": "echo \"No lint configured yet\"",
+    "test": "echo \"No tests yet\""
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.29.3",
+    "estree-walker": "^3.0.3",
+    "fast-glob": "^3.3.3",
+    "magic-string": "^0.30.21",
+    "p-limit": "^7.3.0",
+    "picomatch": "^4.0.4",
+    "write-file-atomic": "^8.0.0",
+    "xxhash-wasm": "^1.1.0",
+    "zod": "^4.4.3"
+  }
+}
