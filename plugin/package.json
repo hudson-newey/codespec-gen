@@ -27,8 +27,12 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.78",
     "@ai-sdk/openai": "^3.0.64",
+    "@ai-sdk/provider": "^3.0.10",
     "@codespec/shared": "workspace:*",
     "ai": "^6.0.188",
-    "ai-sdk-ollama": "^3.8.4"
+    "ai-sdk-ollama": "^3.8.4",
+    "magic-string": "^0.30.21",
+    "p-limit": "^7.3.0",
+    "write-file-atomic": "^8.0.0"
   }
 }

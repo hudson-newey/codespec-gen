@@ -13,11 +13,11 @@ $ npm install codespec-gen
 // vite.config.ts
 import { defineConfig } from "vite";
 import { ollama } from "ai-sdk-ollama";
-import CodeSpec from "codespec-gen/vite";
+import codeSpecPlugin from "codespec-gen/vite-plugin";
 
 export default defineConfig({
   plugins: [
-    CodeSpec({
+    ...codeSpecPlugin({
       // CodeSpec uses Vercel's AI SDK to interface with any provider that
       // implements the standard interface.
       //
