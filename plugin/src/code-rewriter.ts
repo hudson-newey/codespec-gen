@@ -20,19 +20,6 @@ export function applyRewrites(
     const generated = generatedCode.get(site.callStart);
 
     switch (site.type) {
-      case "code$":
-        // Replace the entire CallExpression with the generated expression
-        ms.overwrite(site.callStart, site.callEnd, generated ?? "undefined");
-        break;
-
-      case "guard$": {
-        // Replace the entire enclosing ExpressionStatement
-        const stmtStart = site.statementStart ?? site.callStart;
-        const stmtEnd = site.statementEnd ?? site.callEnd;
-        ms.overwrite(stmtStart, stmtEnd, generated ?? "");
-        break;
-      }
-
       case "context$": {
         // Remove the entire ExpressionStatement (including trailing newline)
         const stmtStart = site.statementStart ?? site.callStart;
@@ -41,23 +28,23 @@ export function applyRewrites(
         break;
       }
 
-      case "docs$": {
-        // Remove the docs$ call statement and insert the JSDoc before the
-        // statement start position (the next declaration follows immediately).
-        const stmtStart = site.statementStart ?? site.callStart;
-        const stmtEnd = site.statementEnd ?? site.callEnd;
-        if (generated) {
+      case "codespec-md": {
+        if (generated?.trimStart().startsWith("/**")) {
+          // JSDoc output: replace the entire enclosing ExpressionStatement so
+          // there is no trailing semicolon that would break JSDoc association
+          // with the following declaration.
+          const stmtStart = site.statementStart ?? site.callStart;
+          const stmtEnd = site.statementEnd ?? site.callEnd;
           ms.overwrite(stmtStart, stmtEnd, generated);
         } else {
-          removeStatementWithTrailingWhitespace(ms, stmtStart, stmtEnd);
+          // Expression or statement output: replace the CallExpression itself.
+          // For statement-generating specs (e.g. guard$), the trailing semicolon
+          // from the enclosing ExpressionStatement becomes a harmless empty
+          // statement.
+          ms.overwrite(site.callStart, site.callEnd, generated ?? "undefined");
         }
         break;
       }
-
-      case "codespec-md":
-        // Treat as a code$ expression replacement
-        ms.overwrite(site.callStart, site.callEnd, generated ?? "undefined");
-        break;
     }
   }
 }
@@ -81,7 +68,10 @@ export function removeUnusedImports(
     const source = decl.source.value;
 
     if (
-      source !== "codespec-gen" &&
+      source !== "codespec-gen/context" &&
+      source !== "@codespec/context" &&
+      source !== "codespec-gen/stdlib" &&
+      source !== "@codespec/stdlib" &&
       !source.endsWith(".codespec.md")
     ) {
       continue;

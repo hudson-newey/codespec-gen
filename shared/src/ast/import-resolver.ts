@@ -1,10 +1,7 @@
 import type { File, ImportDeclaration } from "@babel/types";
 
-export type BuiltinPromptBlock =
-  | "code$"
-  | "guard$"
-  | "context$"
-  | "docs$";
+/** The only builtin that requires special compile-time handling (removal). */
+export type BuiltinPromptBlock = "context$";
 
 export type BindingType = BuiltinPromptBlock | "codespec-md";
 
@@ -14,12 +11,19 @@ export type BindingMap = Map<string, BindingType>;
 /** For codespec-md bindings, maps local identifier name → absolute resolved path */
 export type CodespecMdPaths = Map<string, string>;
 
-const CODESPEC_GEN_PACKAGE = "codespec-gen";
-const BUILTIN_EXPORTS = new Set<string>([
-  "code$",
-  "guard$",
-  "context$",
-  "docs$",
+/** Import paths that export context$ (both published and workspace forms). */
+const CODESPEC_CONTEXT_PACKAGES = new Set([
+  "codespec-gen/context",
+  "@codespec/context",
+]);
+
+/**
+ * Import paths that export stdlib CodeSpecs as .codespec.md-backed functions
+ * (both published and workspace forms).
+ */
+const CODESPEC_STDLIB_PACKAGES = new Set([
+  "codespec-gen/stdlib",
+  "@codespec/stdlib",
 ]);
 
 export interface ResolvedImports {
@@ -28,6 +32,13 @@ export interface ResolvedImports {
   codespecMdPaths: CodespecMdPaths;
 }
 
+/**
+ * Resolve import bindings for CodeSpec-related imports in `ast`.
+ *
+ * @param resolveAbsolute - Optional sync resolver used to map specifiers to
+ *   absolute paths. Required for stdlib named imports to be recognised as
+ *   codespec-md bindings; without it those imports are silently skipped.
+ */
 export function resolveImports(
   ast: File,
   filePath: string,
@@ -43,18 +54,39 @@ export function resolveImports(
   for (const decl of importDecls) {
     const source = decl.source.value;
 
-    // Built-in codespec-gen package
-    if (source === CODESPEC_GEN_PACKAGE) {
+    // context$ — special compile-time directive: removed by the plugin.
+    if (CODESPEC_CONTEXT_PACKAGES.has(source)) {
       for (const specifier of decl.specifiers) {
-        if (specifier.type === "ImportSpecifier") {
-          const imported =
-            specifier.imported.type === "Identifier"
-              ? specifier.imported.name
-              : specifier.imported.value;
-          const local = specifier.local.name;
-          if (BUILTIN_EXPORTS.has(imported)) {
-            bindings.set(local, imported as BuiltinPromptBlock);
-          }
+        if (
+          specifier.type === "ImportSpecifier" &&
+          (specifier.imported.type === "Identifier"
+            ? specifier.imported.name
+            : specifier.imported.value) === "context$"
+        ) {
+          bindings.set(specifier.local.name, "context$");
+        }
+      }
+      continue;
+    }
+
+    // stdlib — named imports are backed by .codespec.md files. Resolve each
+    // named export via "@codespec/stdlib/<name>" subpath and register it as a
+    // codespec-md binding if a path can be resolved.
+    if (CODESPEC_STDLIB_PACKAGES.has(source)) {
+      for (const specifier of decl.specifiers) {
+        if (specifier.type !== "ImportSpecifier") continue;
+        const imported =
+          specifier.imported.type === "Identifier"
+            ? specifier.imported.name
+            : specifier.imported.value;
+        const local = specifier.local.name;
+        const subpath = `@codespec/stdlib/${imported}`;
+        const absPath = resolveAbsolute
+          ? resolveAbsolute(subpath, filePath)
+          : null;
+        if (absPath) {
+          bindings.set(local, "codespec-md");
+          codespecMdPaths.set(local, absPath);
         }
       }
       continue;
@@ -82,3 +114,4 @@ export function resolveImports(
 
   return { bindings, codespecMdPaths };
 }
+

@@ -32,7 +32,7 @@ export default defineConfig({
 
 ```ts
 // main.ts
-import { code$, guard$ } from "codespec-gen";
+import { code$, guard$ } from "codespec-gen/stdlib";
 
 /**
  * @summary

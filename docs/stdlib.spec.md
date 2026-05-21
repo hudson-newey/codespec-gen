@@ -7,7 +7,7 @@ Each CodeSpec in the standard library is a regular [CodeSpec](./codespec.spec.md
 ## Usage
 
 ```ts
-import { code$, guard$, context$, docs$ } from "codespec-gen";
+import { code$, guard$, context$, docs$ } from "codespec-gen/stdlib";
 ```
 
 ## Available CodeSpecs

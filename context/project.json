@@ -1,0 +1,32 @@
+{
+  "name": "context",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "context/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --dir context build"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --dir context dev"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --dir context lint"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --dir context test"
+      }
+    }
+  }
+}

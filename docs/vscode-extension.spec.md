@@ -15,7 +15,8 @@ The extension exists to make CodeSpec authoring and adoption faster by allowing 
 - inline generated code in place of the original compiler call,
 - navigate to generated concrete TypeScript implementations via Go to Definition,
 - inspect generated TypeScript function signatures on hover for stronger typing workflows,
-- inspect the effective context visible at each CodeSpec call site on hover.
+- inspect the effective context visible at each CodeSpec call site on hover,
+- create new CodeSpec files through the `/create-codespec` Copilot skill invocation.
 
 ## Scope
 
@@ -25,7 +26,8 @@ In scope:
 - definition and validation of prompt block syntax as interpreted by the extension,
 - generated code preview and actions,
 - code replacement (inline) workflow,
-- documentation generation workflow powered by LLMs.
+- documentation generation workflow powered by LLMs,
+- CodeSpec authoring workflow via the `/create-codespec` Copilot skill invocation.
 
 Out of scope:
 
@@ -89,9 +91,28 @@ For supported CodeSpec compiler call sites, Go to Definition must resolve to the
 
 If no generated implementation exists yet, the extension should surface a clear message explaining that generation must run first.
 
+### 8. CodeSpec Authoring
+
+The extension must support creating new CodeSpec files through `/create-codespec` as a Copilot skill invocation.
+
+When `/create-codespec` is invoked, the extension should guide the user through required authoring inputs and generate a new `.codespec.md` file.
+
+The generated file should follow the format and conventions defined in [Agent CodeSpec Format Specification](./codespec.spec.md).
+
 ## Documentation Workflow
 
 The extension should support documentation generation scenarios (for example through `docs$`) and present generated output through the same preview + action flow defined above.
+
+## CodeSpec Authoring Workflow
+
+The extension should expose `/create-codespec` as the primary authoring workflow for creating new CodeSpec files.
+
+This workflow should:
+
+- collect required authoring inputs before file creation,
+- create a `.codespec.md` file in a user-selected project location,
+- surface actionable validation errors if authoring input is invalid,
+- defer to [Agent CodeSpec Format Specification](./codespec.spec.md) as the canonical format definition.
 
 ## Functional Requirements
 
@@ -106,6 +127,8 @@ The extension should support documentation generation scenarios (for example thr
 9. The hover signature should update when generated output is regenerated.
 10. The extension must provide hover information for each supported CodeSpec call site that includes the effective context used for that call site.
 11. Go to Definition on supported CodeSpec compiler call sites must navigate to the generated concrete TypeScript implementation artifact, not the `.codespec.md` prompt source.
+12. The extension must support `/create-codespec` as a Copilot skill invocation for creating new CodeSpec files.
+13. Invoking `/create-codespec` must collect required authoring inputs and generate a `.codespec.md` file that follows the canonical format definition.
 
 ## Non-Functional Requirements
 
@@ -126,6 +149,8 @@ The extension should support documentation generation scenarios (for example thr
 8. After selecting `Regenerate`, a subsequent hover reflects the updated generated signature.
 9. Hovering any supported CodeSpec call site displays the effective context for that call site.
 10. Triggering Go to Definition from a supported CodeSpec compiler call site opens the generated concrete TypeScript implementation, not the `.codespec.md` prompt definition.
+11. Invoking `/create-codespec` through Copilot creates a new `.codespec.md` file from guided authoring inputs.
+12. If `/create-codespec` cannot generate a valid file, the user sees a clear actionable error message and can retry.
 
 ## Future Considerations
 

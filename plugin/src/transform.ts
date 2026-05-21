@@ -14,6 +14,54 @@ export interface ModuleTransformResult {
 
 const CONCURRENT_GENERATION_LIMIT = 4;
 
+/** Stdlib subpath prefixes in both published and workspace forms. */
+const STDLIB_SOURCES = new Set(["codespec-gen/stdlib", "@codespec/stdlib"]);
+
+/**
+ * Pre-resolve stdlib named imports to their absolute .codespec.md paths using
+ * the plugin's `this.resolve()` (or any compatible async resolver).
+ *
+ * Returns a map from canonical subpath specifier to absolute file path so
+ * that `resolveImports` can build deterministic `codespecMdPaths` entries.
+ */
+async function preResolveStdlibImports(
+  code: string,
+  filePath: string,
+  resolveId: (id: string, importer: string) => Promise<{ id: string } | null>,
+): Promise<Map<string, string>> {
+  let ast;
+  try {
+    ast = parseSource(code, filePath);
+  } catch {
+    return new Map();
+  }
+
+  const resolved = new Map<string, string>();
+
+  for (const node of ast.program.body) {
+    if (node.type !== "ImportDeclaration") continue;
+    const source = node.source.value;
+    if (!STDLIB_SOURCES.has(source)) continue;
+
+    for (const spec of node.specifiers) {
+      if (spec.type !== "ImportSpecifier") continue;
+      const imported =
+        spec.imported.type === "Identifier"
+          ? spec.imported.name
+          : spec.imported.value;
+      const subpath = `@codespec/stdlib/${imported}`;
+      if (resolved.has(subpath)) continue;
+
+      const result = await resolveId(subpath, filePath);
+      if (result) {
+        resolved.set(subpath, result.id);
+      }
+    }
+  }
+
+  return resolved;
+}
+
 /**
  * Transform a single JS/TS module:
  *  1. Parse AST, resolve CodeSpec bindings
@@ -21,6 +69,9 @@ const CONCURRENT_GENERATION_LIMIT = 4;
  *  3. Enrich each call site with effective context + cache key
  *  4. Resolve from cache or generate
  *  5. Rewrite source and remove unused imports
+ *
+ * @param resolveId - Optional async resolver (Vite's `this.resolve`). Required
+ *   for stdlib imports to be resolved to `.codespec.md` bindings.
  */
 export async function transformModule(
   code: string,
@@ -28,7 +79,17 @@ export async function transformModule(
   opts: ResolvedOptions,
   cacheManager: CacheManager,
   codespecMdContent: Map<string, string>,
+  resolveId?: (id: string, importer: string) => Promise<{ id: string } | null>,
 ): Promise<ModuleTransformResult | null> {
+  // Pre-resolve stdlib subpath imports so resolveImports can map them to
+  // absolute .codespec.md paths synchronously.
+  const preResolved = resolveId
+    ? await preResolveStdlibImports(code, filePath, resolveId)
+    : new Map<string, string>();
+
+  const resolveAbsolute = (specifier: string, _importer: string): string | null =>
+    preResolved.get(specifier) ?? null;
+
   // Parse AST
   let ast;
   try {
@@ -41,7 +102,7 @@ export async function transformModule(
   }
 
   // Resolve import bindings
-  const { bindings, codespecMdPaths } = resolveImports(ast, filePath);
+  const { bindings, codespecMdPaths } = resolveImports(ast, filePath, resolveAbsolute);
 
   if (bindings.size === 0) return null;
 

@@ -1,0 +1,27 @@
+{
+  "name": "@codespec/stdlib",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./code$": { "import": "./dist/code$.codespec.md" },
+    "./guard$": { "import": "./dist/guard$.codespec.md" },
+    "./docs$": { "import": "./dist/docs$.codespec.md" }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "echo \"No lint configured yet\"",
+    "test": "echo \"No tests yet\""
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  }
+}

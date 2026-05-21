@@ -16,29 +16,8 @@ export interface GenerationRequest {
   provider: LanguageModelV3;
 }
 
-const SYSTEM_PROMPTS: Record<string, string> = {
-  code$: `You are a TypeScript code generator. Your output will be inlined at a call site as a TypeScript expression.
-Rules:
-- Output ONLY the TypeScript expression. No imports, no statements, no explanations, no markdown, no backticks.
-- The output must be valid TypeScript that can be used as an expression.
-- Do not include a trailing semicolon.
-- Use existing type information from the surrounding code where possible.`,
-
-  guard$: `You are a TypeScript validation code generator. Your output will be inlined as one or more TypeScript statements.
-Rules:
-- Output ONLY the TypeScript statement(s). No imports, no explanations, no markdown, no backticks.
-- Typically generate an if-check that throws an Error when the condition is violated.
-- End statements with semicolons.
-- Do not wrap in a function.`,
-
-  docs$: `You are a JSDoc documentation generator. Your output will be inserted directly before a code element.
-Rules:
-- Output ONLY the JSDoc comment block.
-- Start with /** and end with */.
-- Do not include code, explanations, or markdown outside the comment.
-- Keep it concise but accurate.`,
-
-  "codespec-md": `You are a TypeScript code generator executing a custom CodeSpec instruction file.
+const SYSTEM_PROMPTS = {
+  "codespec-md": `You are a TypeScript code generator executing a CodeSpec instruction file.
 Rules:
 - Output ONLY the TypeScript expression or statements appropriate for the call site context.
 - No explanations, no markdown, no backticks.
@@ -80,10 +59,9 @@ export async function generateCode(req: GenerationRequest): Promise<string> {
 }
 
 function buildSystemPrompt(req: GenerationRequest): string {
-  const basePrompt =
-    req.type === "codespec-md" && req.codespecMdContent
-      ? `${SYSTEM_PROMPTS["codespec-md"]}\n\n# CodeSpec Instructions\n\n${req.codespecMdContent}`
-      : (SYSTEM_PROMPTS[req.type] ?? SYSTEM_PROMPTS["code$"]!);
+  const basePrompt = req.codespecMdContent
+    ? `${SYSTEM_PROMPTS["codespec-md"]}\n\n# CodeSpec Instructions\n\n${req.codespecMdContent}`
+    : SYSTEM_PROMPTS["codespec-md"];
 
   if (req.effectiveContext.length === 0) {
     return basePrompt;
@@ -97,21 +75,11 @@ function buildSystemPrompt(req: GenerationRequest): string {
 }
 
 function buildUserPrompt(req: GenerationRequest): string {
-  if (req.type === "codespec-md" && req.callArgs) {
+  if (req.callArgs) {
     const argsBlock = JSON.stringify(req.callArgs, null, 2);
     return `Execute the CodeSpec with these arguments:\n${argsBlock}`;
   }
-
-  switch (req.type) {
-    case "code$":
-      return `Generate TypeScript for: ${req.instruction}`;
-    case "guard$":
-      return `Generate a TypeScript validation check for: ${req.instruction}`;
-    case "docs$":
-      return `Generate JSDoc documentation${req.instruction ? ` with context: ${req.instruction}` : ""}.`;
-    default:
-      return req.instruction;
-  }
+  return req.instruction;
 }
 
 function stripMarkdownFences(text: string): string {
@@ -126,11 +94,12 @@ function validateTypeScript(
   type: BindingType,
   instruction: string,
 ): void {
-  // For docs$ we expect a comment, not TypeScript syntax — skip babel parse
-  if (type === "docs$") {
-    if (!code.startsWith("/**")) {
+  // JSDoc output: validate it starts with /** rather than trying to parse it
+  // as TypeScript.
+  if (code.trimStart().startsWith("/**")) {
+    if (!code.includes("*/")) {
       throw new Error(
-        `docs$ generation produced invalid output (expected JSDoc starting with /**) for: "${instruction}"`,
+        `CodeSpec generation produced invalid JSDoc for "${instruction}": missing closing */`,
       );
     }
     return;

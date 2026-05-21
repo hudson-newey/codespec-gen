@@ -25,8 +25,10 @@ const DEFAULT_EXCLUDE = ["node_modules/**", "codespec_gen/**"];
 /**
  * CodeSpec Vite plugin.
  *
- * Transforms `code$`, `guard$`, `context$`, `docs$`, and local `.codespec.md`
- * imports into inline TypeScript at build time using the configured LLM provider.
+ * Transforms `.codespec.md` imports and `context$` calls into inline
+ * TypeScript at build time using the configured LLM provider. Import stdlib
+ * helpers from `codespec-gen/stdlib` and the context helper from
+ * `codespec-gen/context`.
  *
  * @example
  * ```ts
@@ -80,7 +82,27 @@ export function codeSpecPlugin(options: CodeSpecPluginOptions): Plugin[] {
       await cacheManager.init();
     },
 
-    resolveId: loaderPlugin.resolveId,
+    // Map `codespec-gen/*` convenience aliases to the real `@codespec/*`
+    // packages, and delegate `.codespec.md` resolution to the loader plugin.
+    async resolveId(id, importer, opts) {
+      if (id === "codespec-gen/context") {
+        return this.resolve("@codespec/context", importer, opts);
+      }
+      if (id === "codespec-gen/stdlib" || id === "@codespec/stdlib") {
+        return this.resolve("@codespec/stdlib", importer, opts);
+      }
+      if (id.startsWith("codespec-gen/stdlib/")) {
+        const subpath = id.slice("codespec-gen/stdlib/".length);
+        return this.resolve(`@codespec/stdlib/${subpath}`, importer, opts);
+      }
+
+      // Delegate .codespec.md resolution to the loader plugin
+      if (loaderPlugin.resolveId) {
+        return (loaderPlugin.resolveId as Function).call(this, id, importer, opts);
+      }
+      return null;
+    },
+
     load: loaderPlugin.load,
 
     async transform(code, id) {
@@ -90,6 +112,16 @@ export function codeSpecPlugin(options: CodeSpecPluginOptions): Plugin[] {
       if (!filter(cleanId)) return null;
       if (cleanId.endsWith(".codespec.md")) return null;
 
+      // Bind this.resolve so transformModule can pre-resolve stdlib imports
+      // to their absolute .codespec.md paths.
+      const resolveId = async (
+        specifier: string,
+        importer: string,
+      ): Promise<{ id: string } | null> => {
+        const result = await this.resolve(specifier, importer);
+        return result ?? null;
+      };
+
       try {
         const result = await transformModule(
           code,
@@ -97,6 +129,7 @@ export function codeSpecPlugin(options: CodeSpecPluginOptions): Plugin[] {
           resolvedOpts,
           cacheManager,
           registry.asMap(),
+          resolveId,
         );
         if (!result) return null;
         // MagicString SourceMap is structurally compatible with Vite's
