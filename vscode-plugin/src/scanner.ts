@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import QuickLRU from "quick-lru";
-import { parseSource, resolveImports, findCallSites } from "@codespec/shared";
-import type { CallSite } from "@codespec/shared";
+import { parseSource, resolveImports, findCallSites } from "../../shared/src/index.js";
+import type { CallSite } from "../../shared/src/index.js";
 
 interface ScanResult {
   callSites: CallSite[];

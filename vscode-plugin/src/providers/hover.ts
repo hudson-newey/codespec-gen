@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "node:path";
-import { loadDirectoryContext } from "@codespec/shared";
+import { loadDirectoryContext } from "../../../shared/src/index.js";
 import type { DocumentScanner } from "../scanner.js";
 import type { ArtifactReader } from "../artifact-reader.js";
 

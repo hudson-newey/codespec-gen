@@ -35,11 +35,11 @@ const DEFAULT_EXCLUDE = ["node_modules/**", "codespec_gen/**"];
  * // vite.config.ts
  * import { defineConfig } from "vite";
  * import { openai } from "@ai-sdk/openai";
- * import CodeSpec from "@codespec/vite-plugin";
+ * import { codeSpecPlugin } from "@codespec/vite-plugin";
  *
  * export default defineConfig({
  *   plugins: [
- *     CodeSpec({ provider: openai("gpt-4o") }),
+ *     ...codeSpecPlugin({ provider: openai("gpt-4o") }),
  *   ],
  * });
  * ```
@@ -82,13 +82,24 @@ export function codeSpecPlugin(options: CodeSpecPluginOptions): Plugin[] {
       await cacheManager.init();
     },
 
-    // Map `codespec-gen/*` convenience aliases to the real `@codespec/*`
-    // packages, and delegate `.codespec.md` resolution to the loader plugin.
+    // Normalize published `@codespec/*` imports to `codespec-gen/*` aliases,
+    // and delegate `.codespec.md` resolution to the loader plugin.
     async resolveId(id, importer, opts) {
+      if (id === "@codespec/context") {
+        return this.resolve("codespec-gen/context", importer, opts);
+      }
+      if (id === "@codespec/stdlib") {
+        return this.resolve("codespec-gen/stdlib", importer, opts);
+      }
+      if (id.startsWith("@codespec/stdlib/")) {
+        const subpath = id.slice("@codespec/stdlib/".length);
+        return this.resolve(`codespec-gen/stdlib/${subpath}`, importer, opts);
+      }
+
       if (id === "codespec-gen/context") {
         return this.resolve("@codespec/context", importer, opts);
       }
-      if (id === "codespec-gen/stdlib" || id === "@codespec/stdlib") {
+      if (id === "codespec-gen/stdlib") {
         return this.resolve("@codespec/stdlib", importer, opts);
       }
       if (id.startsWith("codespec-gen/stdlib/")) {

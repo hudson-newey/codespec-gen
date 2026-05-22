@@ -70,7 +70,7 @@ export function resolveImports(
     }
 
     // stdlib — named imports are backed by .codespec.md files. Resolve each
-    // named export via "@codespec/stdlib/<name>" subpath and register it as a
+    // named export via "codespec-gen/stdlib/<name>" subpath and register it as a
     // codespec-md binding if a path can be resolved.
     if (CODESPEC_STDLIB_PACKAGES.has(source)) {
       for (const specifier of decl.specifiers) {
@@ -80,7 +80,7 @@ export function resolveImports(
             ? specifier.imported.name
             : specifier.imported.value;
         const local = specifier.local.name;
-        const subpath = `@codespec/stdlib/${imported}`;
+        const subpath = `codespec-gen/stdlib/${imported}`;
         const absPath = resolveAbsolute
           ? resolveAbsolute(subpath, filePath)
           : null;

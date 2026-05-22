@@ -1,5 +1,5 @@
 import type { LanguageModelV3 } from "@ai-sdk/provider";
-import type { CallSite } from "@codespec/shared";
+import type { CallSite } from "../../shared/src/index.js";
 
 export interface CodeSpecPluginOptions {
   /**

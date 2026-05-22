@@ -14,8 +14,6 @@
     "@codespec/vite-plugin": "workspace:*"
   },
   "devDependencies": {
-    "ai-sdk-ollama": "^3.8.4",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.0"
+    "ai-sdk-ollama": "^3.8.4"
   }
 }

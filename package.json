@@ -1,11 +1,38 @@
 {
   "name": "codespec-gen",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "description": "CodeSpec monorepo workspace",
+  "type": "module",
+  "main": "./dist/vite-plugin/index.js",
+  "types": "./dist/vite-plugin/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/vite-plugin/index.d.ts",
+      "import": "./dist/vite-plugin/index.js"
+    },
+    "./vite-plugin": {
+      "types": "./dist/vite-plugin/index.d.ts",
+      "import": "./dist/vite-plugin/index.js"
+    },
+    "./stdlib": {
+      "types": "./dist/stdlib/index.d.ts",
+      "import": "./dist/stdlib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "nx": "nx",
-    "build": "nx run-many -t build --all",
+    "build": "nx run-many -t build -p stdlib,vite-plugin,vscode-plugin",
+    "prepack": "pnpm build",
     "lint": "nx run-many -t lint --all",
     "test": "nx run-many -t test --all",
     "dev": "nx run dev-site:dev"
@@ -16,7 +43,23 @@
   "packageManager": "pnpm@10.33.0",
   "devDependencies": {
     "@types/node": "^25.9.1",
-    "nx": "22.7.2"
+    "nx": "22.7.2",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.0",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "peerDependencies": {
+    "vite": "^7.0.0"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.78",
+    "@ai-sdk/openai": "^3.0.64",
+    "@ai-sdk/provider": "^3.0.10",
+    "ai": "^6.0.188",
+    "ai-sdk-ollama": "^3.8.4",
+    "magic-string": "^0.30.21",
+    "p-limit": "^7.3.0",
+    "write-file-atomic": "^8.0.0"
   },
   "pnpm": {
     "overrides": {

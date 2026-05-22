@@ -1,5 +1,5 @@
 import MagicString from "magic-string";
-import type { CallSite } from "@codespec/shared";
+import type { CallSite } from "../../shared/src/index.js";
 import type { File, Declaration, Statement } from "@babel/types";
 
 /**

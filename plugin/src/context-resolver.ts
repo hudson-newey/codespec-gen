@@ -1,5 +1,5 @@
-import type { CallSite } from "@codespec/shared";
-import { loadDirectoryContext } from "@codespec/shared";
+import type { CallSite } from "../../shared/src/index.js";
+import { loadDirectoryContext } from "../../shared/src/index.js";
 import type { ResolvedOptions } from "./types.js";
 
 /**

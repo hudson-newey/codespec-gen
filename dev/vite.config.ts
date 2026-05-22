@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import { ollama } from "ai-sdk-ollama";
-import codeSpecPlugin from "@codespec/vite-plugin";
+import { codeSpecPlugin } from "@codespec/vite-plugin";
 
 export default defineConfig({
   plugins: [

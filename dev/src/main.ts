@@ -1,15 +1,15 @@
-import { code$ } from "codespec-gen/stdlib";
+import printHello$ from "./prompt.codespec.md";
 
 const root = document.querySelector<HTMLDivElement>("#app");
 
 if (root) {
-  $code("print 'hello world' out to the console");
+  printHello$();
 
   root.innerHTML = `
     <section style="font-family: sans-serif; max-width: 720px; margin: 40px auto; line-height: 1.4;">
       <h1>CodeSpec Dev Website</h1>
       <p>
-        The <code>@codespec/vite-plugin</code> is active. Add
+        The <code>codespec-gen/vite-plugin</code> alias is active. Add
         <code>code$</code>, <code>guard$</code>, <code>context$</code>, or
         <code>docs$</code> calls (imported from <code>codespec-gen</code>) to
         any TypeScript file — the plugin will replace them with LLM-generated

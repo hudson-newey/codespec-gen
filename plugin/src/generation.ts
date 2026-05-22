@@ -1,7 +1,7 @@
 import { generateText } from "ai";
 import type { LanguageModelV3 } from "@ai-sdk/provider";
-import { parseSource } from "@codespec/shared";
-import type { BindingType } from "@codespec/shared";
+import { parseSource } from "../../shared/src/index.js";
+import type { BindingType } from "../../shared/src/index.js";
 
 export interface GenerationRequest {
   type: BindingType;

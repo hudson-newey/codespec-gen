@@ -7,7 +7,7 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pnpm --dir stdlib build"
+        "command": "pnpm --dir stdlib build && node -e \"const fs=require('node:fs');const src='stdlib/dist';const dst='dist/stdlib';fs.rmSync(dst,{recursive:true,force:true});fs.mkdirSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true});\""
       }
     },
     "dev": {

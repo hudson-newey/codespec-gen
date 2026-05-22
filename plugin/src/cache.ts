@@ -6,12 +6,12 @@ import type {
   ArtifactMetadata,
   ArtifactManifest,
   ArtifactEntry,
-} from "@codespec/shared";
+} from "../../shared/src/index.js";
 import {
   ArtifactManifestSchema,
   ArtifactEntrySchema,
   SCHEMA_VERSION,
-} from "@codespec/shared";
+} from "../../shared/src/index.js";
 
 const MANIFEST_FILE = "manifest.json";
 const LOOKUP_FILE = "lookup.json";

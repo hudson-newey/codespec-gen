@@ -7,7 +7,7 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pnpm --dir plugin build"
+        "command": "pnpm --dir plugin build && node -e \"const fs=require('node:fs');const src='plugin/dist';const dst='dist/vite-plugin';fs.rmSync(dst,{recursive:true,force:true});fs.mkdirSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true});\""
       }
     },
     "dev": {

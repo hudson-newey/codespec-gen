@@ -7,7 +7,7 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pnpm --dir vscode-plugin build"
+        "command": "pnpm --dir vscode-plugin build && node -e \"const fs=require('node:fs');const src='vscode-plugin/dist';const dst='dist/vscode-plugin';fs.rmSync(dst,{recursive:true,force:true});fs.mkdirSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true});\""
       }
     },
     "watch": {

@@ -1,6 +1,11 @@
 import MagicString from "magic-string";
 import pLimit from "p-limit";
-import { parseSource, resolveImports, findCallSites, computeCacheKey } from "@codespec/shared";
+import {
+  parseSource,
+  resolveImports,
+  findCallSites,
+  computeCacheKey,
+} from "../../shared/src/index.js";
 import { resolveEffectiveContext } from "./context-resolver.js";
 import { generateCode } from "./generation.js";
 import { applyRewrites, removeUnusedImports } from "./code-rewriter.js";
@@ -49,7 +54,7 @@ async function preResolveStdlibImports(
         spec.imported.type === "Identifier"
           ? spec.imported.name
           : spec.imported.value;
-      const subpath = `@codespec/stdlib/${imported}`;
+      const subpath = `codespec-gen/stdlib/${imported}`;
       if (resolved.has(subpath)) continue;
 
       const result = await resolveId(subpath, filePath);
