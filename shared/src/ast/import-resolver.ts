@@ -1,3 +1,4 @@
+import { resolve, dirname, isAbsolute } from "node:path";
 import type { File, ImportDeclaration } from "@babel/types";
 
 /** The only builtin that requires special compile-time handling (removal). */
@@ -102,10 +103,18 @@ export function resolveImports(
           const local = specifier.local.name;
           bindings.set(local, "codespec-md");
 
-          // Resolve to absolute path if resolver provided, else store source
-          const absPath = resolveAbsolute
-            ? (resolveAbsolute(source, filePath) ?? source)
-            : source;
+          // Resolve to absolute path.
+          // Relative paths are resolved directly from the importer's directory
+          // so registry lookups (which use absolute paths) always hit correctly.
+          // Absolute paths fall through to resolveAbsolute or are used as-is.
+          let absPath: string;
+          if (!isAbsolute(source)) {
+            absPath = resolve(dirname(filePath), source);
+          } else {
+            absPath = resolveAbsolute
+              ? (resolveAbsolute(source, filePath) ?? source)
+              : source;
+          }
           codespecMdPaths.set(local, absPath);
         }
       }

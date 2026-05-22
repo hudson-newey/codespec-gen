@@ -1,5 +1,5 @@
 {
-  "name": "@codespec/vscode-plugin",
+  "name": "codespec-gen-vscode",
   "displayName": "CodeSpec",
   "description": "CodeSpec VS Code extension — expand, preview, and inline LLM-generated code blocks",
   "version": "0.1.0",
@@ -55,6 +55,7 @@
   },
   "scripts": {
     "build": "vite build && tsc -p ./tsconfig.json --noEmit",
+    "package": "pnpm build && vsce package --no-dependencies --allow-missing-repository --skip-license -o dist/$npm_package_name-$npm_package_version.vsix",
     "watch": "vite build --watch",
     "lint": "echo \"No lint configured yet\"",
     "test": "echo \"No tests yet\""

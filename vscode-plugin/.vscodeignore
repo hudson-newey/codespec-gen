@@ -1,0 +1,16 @@
+# Start from excluding everything, then opt-in required extension files.
+**/*
+
+# Required extension manifest.
+!package.json
+
+# Compiled extension runtime.
+!dist/**
+
+# Copilot skill metadata bundled with the extension.
+!skills/**
+
+# Optional docs/license files if present.
+!README.md
+!CHANGELOG.md
+!LICENSE*

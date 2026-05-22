@@ -1,4 +1,5 @@
 import MagicString from "magic-string";
+import * as path from "node:path";
 import pLimit from "p-limit";
 import {
   parseSource,
@@ -189,6 +190,7 @@ export async function transformModule(
             effectiveContext: site.effectiveContext,
             codespecMdContent: codespecContent,
             provider: opts.provider,
+            displayName: `${site.localName} · ${path.relative(opts.projectRoot, filePath)}`,
           });
         } catch (err) {
           const msg = `CodeSpec: Generation failed for ${site.type} at ${filePath}:${site.callStart} — ${String(err)}`;

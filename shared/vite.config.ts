@@ -12,6 +12,9 @@ export default defineConfig({
       formats: ["es"],
       fileName: "index",
     },
+    rollupOptions: {
+      external: (id) => id.startsWith("node:") || id === "path" || id === "fs",
+    },
   },
   plugins: [
     dts({

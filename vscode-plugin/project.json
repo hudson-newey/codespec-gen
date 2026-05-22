@@ -19,6 +19,12 @@
         "command": "pnpm --dir vscode-plugin watch"
       }
     },
+    "package": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm --dir vscode-plugin package"
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"],

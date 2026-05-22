@@ -133,6 +133,24 @@ export function codeSpecPlugin(options: CodeSpecPluginOptions): Plugin[] {
         return result ?? null;
       };
 
+      // Pre-load any .codespec.md imports into the registry BEFORE calling
+      // transformModule. Vite's load hook (which populates the registry) only
+      // fires after the current transform returns and the browser/bundler
+      // discovers the import — too late. Forcing this.load() here ensures the
+      // registry has content when transformModule needs it.
+      for (const match of code.matchAll(
+        /from\s+['"]([^'"]*\.codespec\.md)['"]/g,
+      )) {
+        const specifier = match[1]!;
+        const resolved = await this.resolve(specifier, cleanId);
+        if (resolved) {
+          const absId = resolved.id.split("?")[0]!;
+          if (registry.get(absId) === undefined) {
+            await this.load({ id: resolved.id });
+          }
+        }
+      }
+
       try {
         const result = await transformModule(
           code,

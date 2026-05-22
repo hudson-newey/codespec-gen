@@ -14,6 +14,7 @@ const packageExternals = [
   "@ai-sdk/openai",
   "@ai-sdk/provider",
   "ai-sdk-ollama",
+  "log-update",
   "magic-string",
   "p-limit",
   "write-file-atomic",

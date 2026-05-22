@@ -1,4 +1,4 @@
-import printHello$ from "./prompt.codespec.md";
+import printHello$ from "./printHello.codespec.md";
 
 const root = document.querySelector<HTMLDivElement>("#app");
 
