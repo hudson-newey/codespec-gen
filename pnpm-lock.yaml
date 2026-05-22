@@ -74,6 +74,9 @@ importers:
 
   dev:
     dependencies:
+      '@codespec/stdlib':
+        specifier: workspace:*
+        version: link:../stdlib
       '@codespec/vite-plugin':
         specifier: workspace:*
         version: link:../plugin

@@ -68,6 +68,10 @@ When you hover over a `code$` block, the extension shows the function signature 
 
 To replace the CodeSpec function call with the generated code, you can use the 'inline' button found after expanding the generated code.
 
+### Creating `.codespec.md` Files
+
+You can create reusable `.codespec.md` files directly from the VSCode extension via the `@codespec /create` copilot command. This will guide you through the process of creating a new CodeSpec file with the correct frontmatter and structure.
+
 ## Reducing API Costs
 
 CodeSpec is designed to avoid unnecessary generation calls:

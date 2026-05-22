@@ -37,17 +37,12 @@ export function activate(context: vscode.ExtensionContext): void {
     );
   }
 
-  // Refresh CodeLens when the artifact lookup changes (new build ran)
-  const watcher = (
-    artifacts as unknown as { watcher?: vscode.FileSystemWatcher }
-  )["watcher"];
-  if (watcher) {
-    context.subscriptions.push(
-      watcher.onDidChange(() => codeLens.refresh()),
-      watcher.onDidCreate(() => codeLens.refresh()),
-    );
-  }
-  context.subscriptions.push(artifacts);
+  // Refresh CodeLens whenever the artifact reader discovers new or changed
+  // lookup.json files (i.e. after a build writes fresh generated artifacts).
+  context.subscriptions.push(
+    artifacts.onDidChange(() => codeLens.refresh()),
+    artifacts,
+  );
 
   // Invalidate scanner cache on document close
   context.subscriptions.push(
