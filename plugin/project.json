@@ -5,9 +5,11 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/vite:build",
       "options": {
-        "command": "pnpm --dir plugin build && node -e \"const fs=require('node:fs');const src='plugin/dist';const dst='dist/vite-plugin';fs.rmSync(dst,{recursive:true,force:true});fs.mkdirSync(dst,{recursive:true});fs.cpSync(src,dst,{recursive:true});\""
+        "outputPath": "dist/vite-plugin",
+        "tsConfig": "plugin/tsconfig.json",
+        "configFile": "plugin/vite.config.ts"
       }
     },
     "dev": {
@@ -17,9 +19,11 @@
       }
     },
     "lint": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "command": "pnpm --dir plugin lint"
+        "lintFilePatterns": ["plugin/**/*.{ts,tsx,js,mjs,cjs}"],
+        "eslintConfig": "eslint.config.cjs"
       }
     },
     "test": {

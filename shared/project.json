@@ -17,9 +17,11 @@
       }
     },
     "lint": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "command": "pnpm --dir shared lint"
+        "lintFilePatterns": ["shared/**/*.{ts,tsx,js,mjs,cjs}"],
+        "eslintConfig": "eslint.config.cjs"
       }
     },
     "test": {
