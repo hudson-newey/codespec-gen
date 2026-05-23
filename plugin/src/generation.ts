@@ -3,6 +3,7 @@ import type { LanguageModelV3 } from "@ai-sdk/provider";
 import { parseSource } from "../../shared/src/index.js";
 import type { BindingType } from "../../shared/src/index.js";
 import { terminalDisplay } from "./terminal-display.js";
+import SYSTEM_PROMPT from "./prompts/system.prompt.js";
 
 export interface GenerationRequest {
   type: BindingType;
@@ -22,14 +23,6 @@ export interface GenerationRequest {
   displayName?: string;
 }
 
-const SYSTEM_PROMPTS = {
-  "codespec-md": `You are a TypeScript code generator executing a CodeSpec instruction file.
-Rules:
-- Output ONLY the TypeScript expression or statements appropriate for the call site context.
-- No explanations, no markdown, no backticks.
-- Follow the CodeSpec instructions precisely.`,
-};
-
 /**
  * Generate TypeScript code for a prompt block call site.
  * Uses temperature 0 (or lowest supported) for deterministic output.
@@ -41,7 +34,7 @@ export async function generateCode(req: GenerationRequest): Promise<string> {
   const userPrompt = buildUserPrompt(req);
 
   const label = req.displayName
-    ? `${req.type} · ${req.displayName}`
+    ? `${req.displayName}`
     : req.type;
   const displayKey = `${req.type}:${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 
@@ -51,6 +44,8 @@ export async function generateCode(req: GenerationRequest): Promise<string> {
   try {
     const response = streamText({
       model: req.provider,
+      // We purposely use the lowest possible temperature to encourage
+      // deterministic output, which is important for code generation.
       temperature: 0,
       system: systemPrompt,
       prompt: userPrompt,
@@ -82,8 +77,8 @@ export async function generateCode(req: GenerationRequest): Promise<string> {
 
 function buildSystemPrompt(req: GenerationRequest): string {
   const basePrompt = req.codespecMdContent
-    ? `${SYSTEM_PROMPTS["codespec-md"]}\n\n# CodeSpec Instructions\n\n${req.codespecMdContent}`
-    : SYSTEM_PROMPTS["codespec-md"];
+    ? `${SYSTEM_PROMPT}\n\n# CodeSpec Instructions\n\n${req.codespecMdContent}`
+    : SYSTEM_PROMPT;
 
   if (req.effectiveContext.length === 0) {
     return basePrompt;
@@ -104,7 +99,7 @@ function buildUserPrompt(req: GenerationRequest): string {
   if (req.type === "codespec-md") {
     return req.instruction
       ? `Execute the CodeSpec with this input: ${req.instruction}`
-      : "Generate the TypeScript implementation as described in the CodeSpec instructions above.";
+      : "Generate the implementation as described in the CodeSpec instructions above.";
   }
   return req.instruction;
 }

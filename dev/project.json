@@ -7,6 +7,7 @@
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
+      "dependsOn": ["vite-plugin:build"],
       "options": {
         "command": "pnpm --dir dev dev"
       }

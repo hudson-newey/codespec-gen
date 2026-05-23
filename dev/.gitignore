@@ -1,2 +1,6 @@
-# You'd usually want to commit this file to your repository
-#codespec_gen/
+# You'd usually want to commit this file to your repository, however, because we're
+# testing the compiler in this project, we want to ignore the generated code from the
+# to reduce the amount of churn in the repository.
+# Additionally, because we're using a local ollama model, the cost of a cache miss is
+# very low.
+codespec_gen/

@@ -40,7 +40,6 @@ export default defineConfig({
       outDir: "dist",
       tsconfigPath: resolve(__dirname, "tsconfig.json"),
       include: ["src/**/*.ts"],
-      skipDiagnostics: true,
     }),
   ],
 });

@@ -75,9 +75,7 @@ export function createCodespecMdPlugin(registry: CodespecMdRegistry) {
       // the CODESPEC_MD_MARKER comment and the binding type from import-resolver.
       return `// ${CODESPEC_MD_MARKER}::${id}
 // This stub is replaced at compile time by the CodeSpec Vite plugin.
-export default function codespecMdStub(
-  args?: Record<string, unknown>,
-): never {
+export default function codespecMdStub(args) {
   throw new Error(
     "CodeSpec: This function was not compiled. Ensure the CodeSpec Vite plugin is active.",
   );
