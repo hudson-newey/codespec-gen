@@ -74,9 +74,6 @@ importers:
 
   dev:
     dependencies:
-      '@codespec/stdlib':
-        specifier: workspace:*
-        version: link:../stdlib
       '@codespec/vite-plugin':
         specifier: workspace:*
         version: link:../plugin
@@ -191,9 +188,6 @@ importers:
       quick-lru:
         specifier: ^7.3.0
         version: 7.3.0
-      vscode-plugin:
-        specifier: ^1.0.5
-        version: 1.0.5
 
 packages:
 
@@ -3539,9 +3533,6 @@ packages:
         optional: true
       jsdom:
         optional: true
-
-  vscode-plugin@1.0.5:
-    resolution: {integrity: sha512-lbbYnbVV6SEemffKDqhetLcPsLcIezJecs+ibwq5HTRMLBRq1dxs5fCXLQDfiajZjGTEJLzhKDTNFo1jNt4J9A==}
 
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
@@ -7405,8 +7396,6 @@ snapshots:
       '@types/node': 25.9.1
     transitivePeerDependencies:
       - msw
-
-  vscode-plugin@1.0.5: {}
 
   vscode-uri@3.1.0: {}
 

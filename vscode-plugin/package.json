@@ -66,8 +66,7 @@
     "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.9.1",
     "add": "^2.0.6",
-    "quick-lru": "^7.3.0",
-    "vscode-plugin": "^1.0.5"
+    "quick-lru": "^7.3.0"
   },
   "dependencies": {
     "@codespec/shared": "workspace:*"
