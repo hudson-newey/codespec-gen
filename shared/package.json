@@ -30,6 +30,6 @@
     "picomatch": "^4.0.4",
     "write-file-atomic": "^8.0.0",
     "xxhash-wasm": "^1.1.0",
-    "zod": "^4.4.3"
+    "zod": "^4.6.6"
   }
 }
